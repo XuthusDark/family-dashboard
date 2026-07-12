@@ -1,5 +1,14 @@
 import ical from 'node-ical';
-import { addDays, startOfDay, endOfDay, isWithinInterval, parseISO } from 'date-fns';
+
+function startOfDay(d) {
+  const r = new Date(d); r.setHours(0,0,0,0); return r;
+}
+function endOfDay(d) {
+  const r = new Date(d); r.setHours(23,59,59,999); return r;
+}
+function addDays(d, n) {
+  const r = new Date(d); r.setDate(r.getDate() + n); return r;
+}
 
 let cache = null;
 let cacheTime = 0;
@@ -65,7 +74,7 @@ export async function fetchCalendar(urls, daysAhead = 14) {
         const allDay = isAllDay(ev);
         const inRange = allDay
           ? start <= rangeEnd && (ev.end ? end >= rangeStart : true)
-          : isWithinInterval(start, { start: rangeStart, end: rangeEnd }) || isWithinInterval(end, { start: rangeStart, end: rangeEnd });
+          : (start >= rangeStart && start <= rangeEnd) || (end >= rangeStart && end <= rangeEnd);
 
         if (!inRange) continue;
 
