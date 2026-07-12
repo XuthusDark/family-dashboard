@@ -7,6 +7,7 @@ import ClockTile from './tiles/ClockTile';
 import WeatherTile from './tiles/WeatherTile';
 import NewsTile from './tiles/NewsTile';
 import CountdownTile from './tiles/CountdownTile';
+import CalendarTile from './tiles/CalendarTile';
 import type { Tile } from '../types';
 
 interface Props {
@@ -27,6 +28,7 @@ function TileContent({ tile }: { tile: Tile }) {
     case 'weather':   return <WeatherTile />;
     case 'news':      return <NewsTile />;
     case 'countdown': return <CountdownTile config={tile.config as { label?: string; targetDate?: string }} />;
+    case 'calendar':  return <CalendarTile />;
     default:          return <div className="p-4 opacity-40">Unknown tile type</div>;
   }
 }

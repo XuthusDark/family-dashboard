@@ -4,7 +4,7 @@ import { useDashboard } from '../../store';
 import { randomUUID } from '../../utils';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
-const TILE_TYPES = ['clock', 'weather', 'news', 'countdown'] as const;
+const TILE_TYPES = ['clock', 'weather', 'news', 'countdown', 'calendar'] as const;
 
 interface Props {
   tile?: Tile;
@@ -16,6 +16,7 @@ const DEFAULTS: Record<string, Partial<Tile>> = {
   weather:   { title: 'Weather',  config: { units: 'fahrenheit' }, layout: { x: 0, y: 0, w: 4, h: 2 } },
   news:      { title: 'News',     config: {}, layout: { x: 0, y: 0, w: 3, h: 3 } },
   countdown: { title: 'Countdown', config: { label: 'Event', targetDate: '' }, layout: { x: 0, y: 0, w: 2, h: 2 } },
+  calendar:  { title: 'Calendar',  config: { daysAhead: 14 },               layout: { x: 0, y: 0, w: 4, h: 4 } },
 };
 
 export default function TileEditor({ tile, onClose }: Props) {
@@ -104,6 +105,19 @@ export default function TileEditor({ tile, onClose }: Props) {
                 style={{ background: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid rgba(255,255,255,0.1)' }} />
             </Field>
           </>
+        )}
+
+        {/* Calendar config — feeds managed globally in Admin → Feeds tab */}
+        {type === 'calendar' && (
+          <Field label="Days ahead to show">
+            <input type="number" min={1} max={30} value={Number(config.daysAhead ?? 14)}
+              onChange={e => setConfig(c => ({ ...c, daysAhead: Number(e.target.value) }))}
+              className="w-24 px-3 py-2 rounded text-sm"
+              style={{ background: 'var(--color-bg)', color: 'var(--color-text)', border: '1px solid rgba(255,255,255,0.1)' }} />
+            <p className="text-xs mt-1" style={{ color: 'var(--color-subtext)' }}>
+              Add calendar feed URLs in Admin → Feeds
+            </p>
+          </Field>
         )}
 
         {/* Schedule */}

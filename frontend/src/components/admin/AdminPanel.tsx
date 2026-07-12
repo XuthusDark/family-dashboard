@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDashboard } from '../../store';
 import TileEditor from './TileEditor';
 import type { Tile, Theme } from '../../types';
+
+interface CalFeed { url: string; label: string; color: string; }
+
+const FEED_COLORS = ['#38bdf8','#4ade80','#fb923c','#f472b6','#a78bfa','#facc15'];
 
 const PRESET_THEMES: { name: string; dark: Theme['dark']; light: Theme['light'] }[] = [
   {
@@ -38,7 +42,30 @@ interface Props {
 export default function AdminPanel({ onClose }: Props) {
   const { tiles, theme, nightMode, setTheme, setNightMode, setAdminUnlocked } = useDashboard();
   const [editingTile, setEditingTile] = useState<Tile | null | 'new'>(null);
-  const [tab, setTab] = useState<'tiles' | 'theme' | 'display'>('tiles');
+  const [tab, setTab] = useState<'tiles' | 'feeds' | 'theme' | 'display'>('tiles');
+  const [calFeeds, setCalFeeds] = useState<CalFeed[]>([]);
+  const [feedsSaved, setFeedsSaved] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/settings/calendars')
+      .then(r => r.ok ? r.json() : { feeds: [] })
+      .then(d => setCalFeeds(d.feeds ?? []));
+  }, []);
+
+  async function saveFeeds() {
+    await fetch('/api/settings/calendars', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ feeds: calFeeds, daysAhead: 14 })
+    });
+    await fetch('/api/data/calendar/refresh', { method: 'POST' });
+    setFeedsSaved(true);
+    setTimeout(() => setFeedsSaved(false), 2000);
+  }
+
+  function addFeed() {
+    setCalFeeds(f => [...f, { url: '', label: '', color: FEED_COLORS[f.length % FEED_COLORS.length] }]);
+  }
 
   function closeAndLock() {
     setAdminUnlocked(false);
@@ -64,8 +91,8 @@ export default function AdminPanel({ onClose }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 p-3 shrink-0">
-          {(['tiles', 'theme', 'display'] as const).map(t => (
+        <div className="flex gap-1 p-3 shrink-0 flex-wrap">
+          {(['tiles', 'feeds', 'theme', 'display'] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className="px-4 py-1.5 rounded capitalize text-sm font-medium"
               style={{ background: tab === t ? 'var(--color-accent)' : 'var(--color-bg)', color: tab === t ? '#fff' : 'var(--color-subtext)' }}>
@@ -95,6 +122,47 @@ export default function AdminPanel({ onClose }: Props) {
                 className="mt-2 py-2 rounded text-sm font-semibold text-white"
                 style={{ background: 'var(--color-accent)' }}>
                 + Add Tile
+              </button>
+            </div>
+          )}
+
+          {tab === 'feeds' && (
+            <div className="flex flex-col gap-3">
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--color-subtext)' }}>
+                Add Google Calendar iCal URLs. In Google Calendar: Settings → [Calendar name] → Integrate calendar → "Secret address in iCal format".
+              </p>
+              {calFeeds.map((feed, i) => (
+                <div key={i} className="flex flex-col gap-2 p-3 rounded" style={{ background: 'var(--color-bg)' }}>
+                  <div className="flex gap-2 items-center">
+                    <input type="color" value={feed.color}
+                      onChange={e => setCalFeeds(f => f.map((x, j) => j === i ? { ...x, color: e.target.value } : x))}
+                      className="w-8 h-8 rounded cursor-pointer border-0 shrink-0" />
+                    <input
+                      placeholder="Label (e.g. Mom, Family)"
+                      value={feed.label}
+                      onChange={e => setCalFeeds(f => f.map((x, j) => j === i ? { ...x, label: e.target.value } : x))}
+                      className="flex-1 px-2 py-1.5 rounded text-sm"
+                      style={{ background: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid rgba(255,255,255,0.1)' }} />
+                    <button onClick={() => setCalFeeds(f => f.filter((_, j) => j !== i))}
+                      className="text-red-400 text-lg leading-none px-1">×</button>
+                  </div>
+                  <input
+                    placeholder="https://calendar.google.com/calendar/ical/..."
+                    value={feed.url}
+                    onChange={e => setCalFeeds(f => f.map((x, j) => j === i ? { ...x, url: e.target.value } : x))}
+                    className="w-full px-2 py-1.5 rounded text-xs font-mono"
+                    style={{ background: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid rgba(255,255,255,0.1)' }} />
+                </div>
+              ))}
+              <button onClick={addFeed}
+                className="py-2 rounded text-sm"
+                style={{ background: 'var(--color-surface)', color: 'var(--color-subtext)' }}>
+                + Add Calendar
+              </button>
+              <button onClick={saveFeeds}
+                className="py-2 rounded text-sm font-semibold text-white"
+                style={{ background: feedsSaved ? '#4ade80' : 'var(--color-accent)' }}>
+                {feedsSaved ? '✓ Saved' : 'Save & Refresh'}
               </button>
             </div>
           )}

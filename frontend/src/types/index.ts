@@ -1,4 +1,4 @@
-export type TileType = 'clock' | 'weather' | 'news' | 'countdown';
+export type TileType = 'clock' | 'weather' | 'news' | 'countdown' | 'calendar';
 
 export interface TileSchedule {
   always: boolean;
