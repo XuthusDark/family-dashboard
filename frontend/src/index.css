@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-accent: #38bdf8;
+  --color-text: #f1f5f9;
+  --color-subtext: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  overflow-x: hidden;
+}
+
+/* Override react-grid-layout placeholder */
+.react-grid-placeholder {
+  background: var(--color-accent) !important;
+  opacity: 0.15 !important;
+  border-radius: 1rem !important;
+}
+
+/* Smooth tile transitions */
+.react-grid-item {
+  transition: transform 200ms ease, box-shadow 200ms ease !important;
+}
+.react-grid-item.react-draggable-dragging {
+  transition: none !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+  z-index: 100 !important;
+}
+
+/* Touch scrolling inside tiles */
+.tile-wrapper {
+  touch-action: auto;
+}
