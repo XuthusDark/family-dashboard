@@ -46,11 +46,15 @@ export const useDashboard = create<DashboardStore>((set, get) => ({
   },
 
   saveTile: async (tile) => {
-    await fetch(`${API}/tiles/${tile.id}`, {
+    const res = await fetch(`${API}/tiles/${tile.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(tile)
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error ?? 'Save failed');
+    }
     await get().loadTiles();
   },
 
