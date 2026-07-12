@@ -12,10 +12,10 @@ mkdirSync(DATA_DIR, { recursive: true });
 function defaultDb() {
   return {
     tiles: [
-      { id: 'clock-1',     type: 'clock',     title: 'Clock',    config: {},                                              schedule: { always: true }, layout: { x: 0, y: 0, w: 2, h: 2 }, enabled: true, sort_order: 0 },
-      { id: 'weather-1',   type: 'weather',   title: 'Weather',  config: { units: 'fahrenheit' },                         schedule: { always: true }, layout: { x: 2, y: 0, w: 4, h: 2 }, enabled: true, sort_order: 1 },
-      { id: 'news-1',      type: 'news',      title: 'AP News',  config: {},                                              schedule: { always: true }, layout: { x: 0, y: 2, w: 3, h: 3 }, enabled: true, sort_order: 2 },
-      { id: 'countdown-1', type: 'countdown', title: 'Countdown', config: { label: 'Christmas', targetDate: '2026-12-25' }, schedule: { always: true }, layout: { x: 3, y: 2, w: 3, h: 2 }, enabled: true, sort_order: 3 }
+      { id: 'clock-1',     type: 'clock',     title: 'Clock',     config: {},                                               schedule: { always: true }, layout: { x: 0, y: 0, w: 3, h: 3 }, enabled: true, sort_order: 0 },
+      { id: 'weather-1',   type: 'weather',   title: 'Weather',   config: { units: 'fahrenheit' },                          schedule: { always: true }, layout: { x: 3, y: 0, w: 9, h: 3 }, enabled: true, sort_order: 1 },
+      { id: 'news-1',      type: 'news',      title: 'AP News',   config: {},                                               schedule: { always: true }, layout: { x: 0, y: 3, w: 8, h: 3 }, enabled: true, sort_order: 2 },
+      { id: 'countdown-1', type: 'countdown', title: 'Countdown', config: { label: 'Christmas', targetDate: '2026-12-25' },  schedule: { always: true }, layout: { x: 8, y: 3, w: 4, h: 3 }, enabled: true, sort_order: 3 }
     ],
     settings: {
       theme: {

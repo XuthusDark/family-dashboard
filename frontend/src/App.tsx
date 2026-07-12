@@ -13,6 +13,7 @@ export default function App() {
   const [editingTile, setEditingTile] = useState<Tile | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [gridWidth, setGridWidth] = useState(window.innerWidth);
+  const [gridHeight, setGridHeight] = useState(window.innerHeight);
 
   useNightMode();
 
@@ -25,6 +26,7 @@ export default function App() {
   useEffect(() => {
     function onResize() {
       setGridWidth(containerRef.current?.clientWidth ?? window.innerWidth);
+      setGridHeight(window.innerHeight);
     }
     onResize();
     window.addEventListener('resize', onResize);
@@ -61,8 +63,8 @@ export default function App() {
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen select-none"
-      style={{ background: 'var(--color-bg)' }}
+      className="relative overflow-hidden select-none"
+      style={{ background: 'var(--color-bg)', width: '100vw', height: '100vh' }}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerLeave={onPointerUp}
@@ -99,6 +101,7 @@ export default function App() {
         adminUnlocked={adminUnlocked}
         onEditTile={tile => { setEditingTile(tile); setShowAdmin(true); }}
         width={gridWidth}
+        height={gridHeight}
       />
 
       {showPinEntry && (

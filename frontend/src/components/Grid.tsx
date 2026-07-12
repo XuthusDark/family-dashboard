@@ -13,10 +13,13 @@ interface Props {
   adminUnlocked: boolean;
   onEditTile: (tile: Tile) => void;
   width: number;
+  height: number;
 }
 
 const COLS = 12;
-const ROW_HEIGHT = 80;
+const GRID_ROWS = 6;
+const MARGIN = 12;
+const PADDING = 16;
 
 function TileContent({ tile }: { tile: Tile }) {
   switch (tile.type) {
@@ -28,8 +31,10 @@ function TileContent({ tile }: { tile: Tile }) {
   }
 }
 
-export default function Grid({ adminUnlocked, onEditTile, width }: Props) {
+export default function Grid({ adminUnlocked, onEditTile, width, height }: Props) {
   const { tiles, saveLayouts } = useDashboard();
+  // Fill the screen exactly: solve for rowHeight given fixed rows, margins, padding
+  const rowHeight = Math.floor((height - PADDING * 2 - MARGIN * (GRID_ROWS - 1)) / GRID_ROWS);
 
   const visible = tiles.filter(t => t.enabled && isTileVisible(t.schedule));
 
@@ -56,13 +61,13 @@ export default function Grid({ adminUnlocked, onEditTile, width }: Props) {
       className="layout"
       layout={layout}
       cols={COLS}
-      rowHeight={ROW_HEIGHT}
+      rowHeight={rowHeight}
       width={width}
       isDraggable={adminUnlocked}
       isResizable={adminUnlocked}
       onLayoutChange={onLayoutChange}
-      margin={[12, 12]}
-      containerPadding={[16, 16]}
+      margin={[MARGIN, MARGIN]}
+      containerPadding={[PADDING, PADDING]}
       draggableHandle=".tile-drag-handle"
     >
       {visible.map(tile => (
