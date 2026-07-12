@@ -30,7 +30,8 @@ export default function PinEntry({ onSuccess, onCancel }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}
+      onPointerDown={e => e.stopPropagation()} onPointerUp={e => e.stopPropagation()}>
       <div className="rounded-2xl p-8 flex flex-col items-center gap-6 w-80" style={{ background: 'var(--color-surface)' }}>
         <div className="text-xl font-bold" style={{ color: 'var(--color-text)' }}>Admin PIN</div>
 

@@ -82,7 +82,8 @@ export default function AdminPanel({ onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
+    <div className="fixed inset-0 z-40 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}
+      onPointerDown={e => e.stopPropagation()} onPointerUp={e => e.stopPropagation()}>
       <div className="rounded-2xl flex flex-col w-[480px] max-h-[80vh]" style={{ background: 'var(--color-surface)' }}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>

@@ -22,6 +22,7 @@ const DEFAULTS: Record<string, Partial<Tile>> = {
 export default function TileEditor({ tile, onClose }: Props) {
   const { saveTile, deleteTile } = useDashboard();
   const isNew = !tile;
+  const [saveError, setSaveError] = useState('');
 
   const [type, setType] = useState(tile?.type ?? 'clock');
   const [title, setTitle] = useState(tile?.title ?? '');
@@ -46,8 +47,12 @@ export default function TileEditor({ tile, onClose }: Props) {
       layout: tile?.layout ?? (base.layout as Tile['layout']),
       enabled
     };
-    await saveTile(t);
-    onClose();
+    try {
+      await saveTile(t);
+      onClose();
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Save failed');
+    }
   }
 
   async function handleDelete() {
@@ -58,7 +63,8 @@ export default function TileEditor({ tile, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}
+      onPointerDown={e => e.stopPropagation()} onPointerUp={e => e.stopPropagation()}>
       <div className="rounded-2xl p-6 flex flex-col gap-4 w-96 max-h-screen overflow-y-auto"
         style={{ background: 'var(--color-surface)' }}>
         <div className="text-lg font-bold" style={{ color: 'var(--color-text)' }}>
@@ -164,6 +170,10 @@ export default function TileEditor({ tile, onClose }: Props) {
           <input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} />
           <span className="text-sm" style={{ color: 'var(--color-text)' }}>Tile enabled</span>
         </label>
+
+        {saveError && (
+          <div className="text-sm text-red-400 px-1">{saveError}</div>
+        )}
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
